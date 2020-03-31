@@ -19,7 +19,7 @@ int main()
         multiThreadedSortedVector.push_back(i);
     } 
 
-    cout << INT64_MAX << endl;
+    cout << "array size: " << serialSortedvector.size() << endl;
 
     serial_time_req = clock();
     //SerialVector Sorting
@@ -27,14 +27,14 @@ int main()
     serial_time_req = clock() - serial_time_req;
     float SerialTimeTaken = float(serial_time_req)/CLOCKS_PER_SEC;
 
-    // multiThread_time_req = clock();
-    // //Multi-Threaded mergeSort
-    // p_mergeSort(multiThreadedSortedVector, 0, multiThreadedSortedVector.size() - 1);
-    // multiThread_time_req = clock() - multiThread_time_req;
-    // float multiThreadedTimeTaken = float(multiThread_time_req)/CLOCKS_PER_SEC;
+    multiThread_time_req = clock();
+    //Multi-Threaded mergeSort
+    p_mergeSort(multiThreadedSortedVector, 0, multiThreadedSortedVector.size() - 1);
+    multiThread_time_req = clock() - multiThread_time_req;
+    float multiThreadedTimeTaken = float(multiThread_time_req)/CLOCKS_PER_SEC;
 
-    // cout << "Serial MergeSort time taken: " <<  SerialTimeTaken << endl;
-    // cout << "Multithreaded MergeSort time taken: " << multiThreadedTimeTaken << endl;
+    cout << "Serial MergeSort time taken: " <<  SerialTimeTaken << endl;
+    cout << "Multithreaded MergeSort time taken: " << multiThreadedTimeTaken << endl;
 
     return 0;
 }
