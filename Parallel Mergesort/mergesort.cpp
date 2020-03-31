@@ -1,25 +1,44 @@
-#include "mergesort.hpp"
+#include "mergesort.h"
 
-void mergeSort(std::vector<int> &arr, int l, int r) 
+void mergeSort(std::vector<int64_t> &arr, int64_t l, int64_t r) 
 { 
     if (l < r) 
     {
-        int m = l+(r-l)/2; 
+        int64_t m = l+(r-l)/2; 
 
         mergeSort(arr, l, m); 
         mergeSort(arr, m+1, r); 
         merge(arr, l, m, r); 
     } 
-} 
+}
 
+void p_mergeSort(std::vector<int64_t>& num, int64_t low,int64_t high)
+{
+    int64_t mid;
+    if(low<high)
+    {
+        mid = low + (high-low)/2;
+        auto future1    =  std::async(std::launch::deferred,[&]()
+                            {
+                                p_mergeSort(num, low, mid);
+                            });
+        auto future2    =  std::async(std::launch::deferred, [&]()
+                            {
+                                p_mergeSort(num, mid+1, high) ;
+                            });
+        future1.get();
+        future2.get();
+        merge(num, low, mid, high);
+    }
+}
 
-void merge(std::vector<int> &arr, int l, int m, int r) 
+void merge(std::vector<int64_t> &arr, int64_t l, int64_t m, int64_t r) 
 { 
-    int i, j, k; 
-    int n1 = m - l + 1; 
-    int n2 =  r - m; 
+    int64_t i, j, k; 
+    int64_t n1 = m - l + 1; 
+    int64_t n2 =  r - m; 
 
-    int L[n1], R[n2]; 
+    int64_t L[n1], R[n2]; 
 
     for (i = 0; i < n1; i++) 
         L[i] = arr[l + i]; 

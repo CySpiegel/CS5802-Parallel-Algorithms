@@ -1,39 +1,40 @@
+#include "mergesort.h"
 
-
-#include "mergesort.hpp"
-
-
-using std::cout;
-using std::endl;
 
 
 
 int main()
 {   
-    std::vector<int> MyVector;
+    clock_t serial_time_req;
+    clock_t multiThread_time_req;
 
-    for(int i = 10; i > 0; --i)
+    vector<int64_t> serialSortedvector;
+    vector<int64_t> multiThreadedSortedVector;
+
+
+    // Worst Case Vector order, Decending Order
+    for(int64_t i = 10000000; i > 0; i--)
     {
-        MyVector.push_back(i);
+        serialSortedvector.push_back(i);
+        multiThreadedSortedVector.push_back(i);
     } 
 
-    int vectorSize = MyVector.size() - 1;
+    cout << INT64_MAX << endl;
 
-    for(int i : MyVector)
-    {
-        cout << i << endl;
-    }
+    serial_time_req = clock();
+    //SerialVector Sorting
+    mergeSort(serialSortedvector, 0, serialSortedvector.size() - 1);
+    serial_time_req = clock() - serial_time_req;
+    float SerialTimeTaken = float(serial_time_req)/CLOCKS_PER_SEC;
 
+    // multiThread_time_req = clock();
+    // //Multi-Threaded mergeSort
+    // p_mergeSort(multiThreadedSortedVector, 0, multiThreadedSortedVector.size() - 1);
+    // multiThread_time_req = clock() - multiThread_time_req;
+    // float multiThreadedTimeTaken = float(multiThread_time_req)/CLOCKS_PER_SEC;
 
-    mergeSort(MyVector, 0, vectorSize);
-
-    std::cout << "hello world" << std::endl;
-
-    for(int i : MyVector)
-    {
-        cout << i << endl;
-    }
-
+    // cout << "Serial MergeSort time taken: " <<  SerialTimeTaken << endl;
+    // cout << "Multithreaded MergeSort time taken: " << multiThreadedTimeTaken << endl;
 
     return 0;
 }
