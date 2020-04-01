@@ -1,5 +1,7 @@
 #include "mergesort.h"
 
+
+
 void mergeSort(std::vector<int64_t> &arr, int64_t l, int64_t r) 
 { 
     if (l < r) 
@@ -11,25 +13,26 @@ void mergeSort(std::vector<int64_t> &arr, int64_t l, int64_t r)
     }
 }
 
-void p_mergeSort(std::vector<int64_t>& num, int64_t low,int64_t high)
+void p_mergeSort(std::vector<int64_t>& num, int64_t low,int64_t high, int count)
 {
     int64_t mid;
-    if(low<high)
+    if(low<high && count <= THREAD_MAX)
     {
         mid = low + (high-low)/2;
         auto future1    =  std::async(std::launch::deferred,[&]()
                             {
-                                p_mergeSort(num, low, mid);
+                                p_mergeSort(num, low, mid, count + 1);
                             });
-        // auto future2    =  std::async(std::launch::deferred, [&]()
-        //                     {
-        //                         p_mergeSort(num, mid+1, high) ;
-        //                     });
-        p_mergeSort(num, mid+1, high);
+        auto future2    =  std::async(std::launch::deferred, [&]()
+                            {
+                                p_mergeSort(num, mid+1, high, count + 1) ;
+                            });
+        //p_mergeSort(num, mid+1, high, count + 1);
         future1.get();
-        // future2.get();
+        future2.get();
         merge(num, low, mid, high);
     }
+    return;
 }
 
 void merge(std::vector<int64_t> &arr, int64_t l, int64_t m, int64_t r) 

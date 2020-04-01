@@ -5,6 +5,7 @@
 
 int main()
 {   
+    int threadCounter = 0;
     clock_t serial_time_req;
     clock_t multiThread_time_req;
 
@@ -13,7 +14,7 @@ int main()
 
 
     // Worst Case Vector order, Decending Order
-    for(int64_t i = 10000000; i > 0; i--)
+    for(int64_t i = 1000000000; i > 0; i--)
     {
         serialSortedvector.push_back(i);
         multiThreadedSortedVector.push_back(i);
@@ -29,7 +30,7 @@ int main()
 
     multiThread_time_req = clock();
     //Multi-Threaded mergeSort
-    p_mergeSort(multiThreadedSortedVector, 0, multiThreadedSortedVector.size() - 1);
+    p_mergeSort(multiThreadedSortedVector, 0, multiThreadedSortedVector.size() - 1, threadCounter);
     multiThread_time_req = clock() - multiThread_time_req;
     float multiThreadedTimeTaken = float(multiThread_time_req)/CLOCKS_PER_SEC;
 
