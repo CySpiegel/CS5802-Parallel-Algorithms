@@ -5,37 +5,76 @@
 
 int main()
 {   
+    // Program controll loop
+    int MAX_VECTOR_SIZE = 100000000;
+    int stepPer = 10000000;
     int threadCounter = 0;
+
+    int THREAD_MAX = 8;
+    int threadRun = 2;
+
+    // Timer Infomation
     clock_t serial_time_req;
     clock_t multiThread_time_req;
 
+    // Vectors to sort
     vector<int64_t> serialSortedvector;
     vector<int64_t> multiThreadedSortedVector;
 
+    // Open files for writing data
 
-    // Worst Case Vector order, Decending Order
-    for(int64_t i = 1000000000; i > 0; i--)
+    ofstream serialData;
+    ofstream multithreadedData;
+
+
+
+    for (threadRun; threadRun <= THREAD_MAX; threadRun++)
     {
-        serialSortedvector.push_back(i);
-        multiThreadedSortedVector.push_back(i);
-    } 
+        
+    serialData.open("serialData_" +  std::to_string(threadRun) + ".txt");
+    multithreadedData.open("multiThreadedData_" + std::to_string(threadRun) + ".txt");
+    
+    cout << threadRun << endl;
 
-    cout << "array size: " << serialSortedvector.size() << endl;
+        for(int currentStep = stepPer; currentStep < MAX_VECTOR_SIZE; currentStep += stepPer)
+        {   
 
-    serial_time_req = clock();
-    //SerialVector Sorting
-    mergeSort(serialSortedvector, 0, serialSortedvector.size() - 1);
-    serial_time_req = clock() - serial_time_req;
-    float SerialTimeTaken = float(serial_time_req)/CLOCKS_PER_SEC;
+            // Worst Case Vector order, Decending Order
+            for(int64_t i = currentStep; i > 0; i--)
+            {
+                serialSortedvector.push_back(i);
+                multiThreadedSortedVector.push_back(i);
+            } 
 
-    multiThread_time_req = clock();
-    //Multi-Threaded mergeSort
-    p_mergeSort(multiThreadedSortedVector, 0, multiThreadedSortedVector.size() - 1, threadCounter);
-    multiThread_time_req = clock() - multiThread_time_req;
-    float multiThreadedTimeTaken = float(multiThread_time_req)/CLOCKS_PER_SEC;
 
-    cout << "Serial MergeSort time taken: " <<  SerialTimeTaken << endl;
-    cout << "Multithreaded MergeSort time taken: " << multiThreadedTimeTaken << endl;
+            serial_time_req = clock();
+            //SerialVector Sorting
+            mergeSort(serialSortedvector, 0, serialSortedvector.size() - 1);
+            serial_time_req = clock() - serial_time_req;
+            float SerialTimeTaken = float(serial_time_req)/CLOCKS_PER_SEC;
+
+            multiThread_time_req = clock();
+            //Multi-Threaded mergeSort
+            p_mergeSort(multiThreadedSortedVector, 0, multiThreadedSortedVector.size() - 1, threadCounter, threadRun);
+            multiThread_time_req = clock() - multiThread_time_req;
+            float multiThreadedTimeTaken = float(multiThread_time_req)/CLOCKS_PER_SEC;
+
+            cout << "Current StepSize: " << currentStep << endl;
+            cout << "Serial MergeSort time taken: " <<  SerialTimeTaken << endl;
+            cout << "Multithreaded MergeSort time taken: " << multiThreadedTimeTaken << "\n" << endl;
+
+            serialData << SerialTimeTaken << endl;
+            multithreadedData << multiThreadedTimeTaken << endl;
+
+            serialSortedvector.erase(serialSortedvector.begin(), serialSortedvector.end());
+            multiThreadedSortedVector.erase(multiThreadedSortedVector.begin(), multiThreadedSortedVector.end());
+        }
+
+            serialData.close();
+            multithreadedData.close();
+    }
+
+
 
     return 0;
 }
