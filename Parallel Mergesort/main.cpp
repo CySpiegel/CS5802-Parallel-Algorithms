@@ -6,8 +6,8 @@
 int main()
 {   
     // Program controll loop
-    int MAX_VECTOR_SIZE = 100000000;
-    int stepPer = 10000000;
+    int MAX_VECTOR_SIZE = 500000000;
+    int stepPer = 50000000;
     int threadCounter = 0;
 
     int THREAD_MAX = 8;
@@ -30,26 +30,34 @@ int main()
 
     for (threadRun; threadRun <= THREAD_MAX; threadRun++)
     {
-        
-    serialData.open("serialData_" +  std::to_string(threadRun) + ".txt");
+    if (threadRun == 2)
+    {
+        serialData.open("serialData.txt");
+    }
     multithreadedData.open("multiThreadedData_" + std::to_string(threadRun) + ".txt");
     
     cout << threadRun << endl;
 
-        for(int currentStep = stepPer; currentStep < MAX_VECTOR_SIZE; currentStep += stepPer)
+        for(int currentStep = stepPer; currentStep <= MAX_VECTOR_SIZE; currentStep += stepPer)
         {   
 
             // Worst Case Vector order, Decending Order
             for(int64_t i = currentStep; i > 0; i--)
             {
-                serialSortedvector.push_back(i);
+                if (threadRun == 2)
+                {
+                    serialSortedvector.push_back(i);
+                }
                 multiThreadedSortedVector.push_back(i);
             } 
 
 
             serial_time_req = clock();
             //SerialVector Sorting
-            mergeSort(serialSortedvector, 0, serialSortedvector.size() - 1);
+            if (threadRun == 2)
+            {
+                mergeSort(serialSortedvector, 0, serialSortedvector.size() - 1);
+            }
             serial_time_req = clock() - serial_time_req;
             float SerialTimeTaken = float(serial_time_req)/CLOCKS_PER_SEC;
 
@@ -60,7 +68,12 @@ int main()
             float multiThreadedTimeTaken = float(multiThread_time_req)/CLOCKS_PER_SEC;
 
             cout << "Current StepSize: " << currentStep << endl;
-            cout << "Serial MergeSort time taken: " <<  SerialTimeTaken << endl;
+
+            if (threadRun == 2)
+            {
+                cout << "Serial MergeSort time taken: " <<  SerialTimeTaken << endl;
+            }
+
             cout << "Multithreaded MergeSort time taken: " << multiThreadedTimeTaken << "\n" << endl;
 
             serialData << SerialTimeTaken << endl;
@@ -69,8 +82,10 @@ int main()
             serialSortedvector.erase(serialSortedvector.begin(), serialSortedvector.end());
             multiThreadedSortedVector.erase(multiThreadedSortedVector.begin(), multiThreadedSortedVector.end());
         }
-
-            serialData.close();
+            if (threadRun == 2)
+            {
+                serialData.close();
+            }
             multithreadedData.close();
     }
 
