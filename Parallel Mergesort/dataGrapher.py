@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     # Y-axis time scale for output graph, if array size being tested < 1000 use 0.01 if arrayMax > 5000 use 1
     # TODO allows system to auto set time scale based on arrayMax.
-    timeScaleFactor = 210
+    timeScaleFactor = 25
 
 
 
@@ -38,26 +38,30 @@ if __name__ == "__main__":
 
     for i in range(2, 9):
         multiThreadedFile = open(os.path.join(sys.path[0], "multiThreadedData_" + str(i) + ".txt"), 'r')
+        multithreadedMergesortData.append([])
         for line in multiThreadedFile:
-            currentMultiThreadFile.append(float(line[:-1]))
-        currentMultiThreadFile = []
-        multithreadedMergesortData.append(currentMultiThreadFile)
-    
-    print(multithreadedMergesortData[0])
+            multithreadedMergesortData[i - 2].append(float(line[:-1]))
+
+
+
+        multiThreadedFile.close()
 
     for i in range(stepSize, arrayMax + stepSize, stepSize):
         RUNRANGE.append(i)
-    print(len(multithreadedMergesortData[0]))
-    print(len(RUNRANGE))
+
+    for i in multithreadedMergesortData:
+        print(i)
 
 
-    plt.plot(RUNRANGE, serialmergesortData, 'm-', label='Single Threaded Mergesort')
+
+    plt.plot(RUNRANGE, serialmergesortData, 'b-', label='Single Threaded Mergesort')
     plt.plot(RUNRANGE, multithreadedMergesortData[0], 'm-', label='2 Threaded Mergesort')
     plt.plot(RUNRANGE, multithreadedMergesortData[1], 'g-', label='3 Threaded Mergesort')
     plt.plot(RUNRANGE, multithreadedMergesortData[2], 'r-', label='4 Threaded Mergesort')
     plt.plot(RUNRANGE, multithreadedMergesortData[3], 'y-', label='5 Threaded Mergesort')
     plt.plot(RUNRANGE, multithreadedMergesortData[4], 'b-', label='6 Threaded Mergesort')
-    plt.plot(RUNRANGE, multithreadedMergesortData[5], 'm-', label='7 Threaded Mergesort')
+    plt.plot(RUNRANGE, multithreadedMergesortData[5], 'y-o', label='7 Threaded Mergesort')
+    plt.plot(RUNRANGE, multithreadedMergesortData[6], 'm-o', label='8 Threaded Mergesort')
 
 
     plt.axis([arrayStart, arrayMax, 0, timeScaleFactor])

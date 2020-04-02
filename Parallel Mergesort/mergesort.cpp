@@ -19,16 +19,9 @@ void p_mergeSort(std::vector<int64_t>& num, int64_t low,int64_t high, int count,
     if(low<high && count <= THREAD_MAX)
     {
         mid = low + (high-low)/2;
-        auto future1    =  std::async(std::launch::deferred,[&]()
-                            {
-                                p_mergeSort(num, low, mid, count + 1, THREAD_MAX);
-                            });
-        auto future2    =  std::async(std::launch::deferred, [&]()
-                            {
-                                p_mergeSort(num, mid+1, high, count + 1, THREAD_MAX) ;
-                            });
-        future1.get();
-        future2.get();
+        auto future = std::async(std::launch::deferred,[&]() {p_mergeSort(num, low, mid, count + 1, THREAD_MAX);});
+        p_mergeSort(num, low, mid, count + 1, THREAD_MAX);
+        future.get();
         merge(num, low, mid, high);
     }
     return;

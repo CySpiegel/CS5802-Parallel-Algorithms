@@ -34,9 +34,9 @@ int main()
     {
         serialData.open("serialData.txt");
     }
-    multithreadedData.open("multiThreadedData_" + std::to_string(threadRun) + ".txt");
+        multithreadedData.open("multiThreadedData_" + std::to_string(threadRun) + ".txt");
     
-    cout << threadRun << endl;
+        cout << threadRun << endl;
 
         for(int currentStep = stepPer; currentStep <= MAX_VECTOR_SIZE; currentStep += stepPer)
         {   
@@ -76,7 +76,7 @@ int main()
 
             cout << "Multithreaded MergeSort time taken: " << multiThreadedTimeTaken << "\n" << endl;
 
-            serialData << SerialTimeTaken << endl;
+            // serialData << SerialTimeTaken << endl;
             multithreadedData << multiThreadedTimeTaken << endl;
 
             serialSortedvector.erase(serialSortedvector.begin(), serialSortedvector.end());
