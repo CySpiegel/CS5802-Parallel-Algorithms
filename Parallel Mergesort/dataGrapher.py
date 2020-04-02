@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     # Y-axis time scale for output graph, if array size being tested < 1000 use 0.01 if arrayMax > 5000 use 1
     # TODO allows system to auto set time scale based on arrayMax.
-    timeScaleFactor = 25
+    timeScaleFactor = 210
 
 
 
