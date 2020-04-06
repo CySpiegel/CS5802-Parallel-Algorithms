@@ -32,9 +32,9 @@ int main()
     {
     if (threadRun == 2)
     {
-        serialData.open("serialData.txt");
+        serialData.open("output/serial/serialData.txt");
     }
-        multithreadedData.open("multiThreadedData_" + std::to_string(threadRun) + ".txt");
+        multithreadedData.open("output/multithreaded/multiThreadedData_" + std::to_string(threadRun) + ".txt");
     
         cout << threadRun << endl;
 

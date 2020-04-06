@@ -30,14 +30,14 @@ if __name__ == "__main__":
 
     print("Reading Data from files")
 
-    serialFile = open(os.path.join(sys.path[0], "serialData.txt"), 'r')
+    serialFile = open(os.path.join(sys.path[0], "output/serial/serialData.txt"), 'r')
 
     for i in serialFile:
         serialmergesortData.append(float(i[:-1]))
     serialFile.close()
 
     for i in range(2, 9):
-        multiThreadedFile = open(os.path.join(sys.path[0], "multiThreadedData_" + str(i) + ".txt"), 'r')
+        multiThreadedFile = open(os.path.join(sys.path[0], "output/multithreaded/multiThreadedData_" + str(i) + ".txt"), 'r')
         multithreadedMergesortData.append([])
         for line in multiThreadedFile:
             multithreadedMergesortData[i - 2].append(float(line[:-1]))
