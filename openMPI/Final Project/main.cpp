@@ -4,6 +4,7 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <string>
+#include <vector>
 #include <iostream>
 
 using std::cout;
@@ -14,22 +15,41 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
     int process_id;
     int size;
+    int num_of_books = 0;
     MPI_Comm_rank(MPI_COMM_WORLD, &process_id);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    std::string collection[4];
+    std::vector<std::string> collection;
 
     if (process_id == 0)
     {
-        collection[0] = "Book_1";
-        collection[1] = "Book_2";
-        collection[2] = "Book_3";
-        collection[3] = "Book_4";
+        collection.push_back("Book_1");
+        collection.push_back("Book_2");
+        collection.push_back("Book_3");
+        collection.push_back("Book_4");
+        num_of_books = collection.size();
+        for (int i =0; i < size; i++)
+        {
+            MPI_Send(&num_of_books, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+    }
+    
+    // Getting vector size from processor_id 0
+    int local_vector_size = 0;
+    if (process_id != 0)
+    {   
+        // Resizing vectors on all processors to match the size of the vector on processor_id 0
+        MPI_Recv(&local_vector_size, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        collection.resize(local_vector_size);
 
     }
+    
+    // Wait for All processors to finish reading in data
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // Broadcasting book names to all processors
-    for(int i =0; i < 4; i++)
+    // collection.size works because it was resized before this point on all processors
+    for(int i =0; i < collection.size(); i++)
         MPI_Bcast(&collection[i], 20, MPI_CHAR, 0, MPI_COMM_WORLD);
     //MPI_Barrier(MPI_COMM_WORLD);
     for(int i =0; i < 4; i++)
@@ -42,7 +62,7 @@ int main(int argc, char *argv[]) {
     // Main work loop for program
     if (process_id == 0)
     {
-        cout << "Finished Broadcasting data: " << sizeof(&collection) << endl;
+        cout << "Finished Broadcasting data: " << collection.size() << endl;
 
 
 
