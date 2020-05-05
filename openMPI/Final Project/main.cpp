@@ -67,12 +67,26 @@ int main(int argc, char *argv[]) {
 
     // Index of current job needing to be processed
     int jobIndex = 0;
+    int fromProc = 0;
 
 
-
-
-
+    for(int i = 0; i < size; i++)
+    {
+        status.MPI_SOURCE = process_id;
+        if (process_id == 0)
+        {
+            MPI_Recv(&readyForWork, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &status);
+            cout << "From Processor: " << status.MPI_SOURCE << endl;
+        }
+        else
+        {
+            MPI_Send(&readyForWork, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        }
+        
+    }
     
+
+
 
     
     MPI_Finalize();
