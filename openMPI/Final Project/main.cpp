@@ -51,7 +51,8 @@ int main(int argc, char *argv[]) {
     // collection.size works because it was resized before this point on all processors
     for(int i =0; i < collection.size(); i++)
         MPI_Bcast(&collection[i], 20, MPI_CHAR, 0, MPI_COMM_WORLD);
-    //MPI_Barrier(MPI_COMM_WORLD);
+    
+    MPI_Barrier(MPI_COMM_WORLD);
     for(int i =0; i < 4; i++)
         cout << "process_id: " << process_id << ": " << collection[i] << endl;
 
@@ -61,8 +62,20 @@ int main(int argc, char *argv[]) {
 
     // Main work loop for program
     if (process_id == 0)
-    {
+    {   
+        bool work_left_to_do = true;
+        int jobs_left = collection.size();
         cout << "Finished Broadcasting data: " << collection.size() << endl;
+
+        do
+        {
+            /* code */
+
+
+
+
+        } while (work_left_to_do);
+        
 
 
 
