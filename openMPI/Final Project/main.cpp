@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
     int process_id;
     int size;
     int num_of_books = 0;
+    int wordCountGlobal = 0;
     MPI_Status status;
     MPI_Comm_rank(MPI_COMM_WORLD, &process_id);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -80,27 +81,28 @@ int main(int argc, char *argv[]) {
     // Deviding work evenly as possable across all processors
     int start = process_id * (static_cast<double>(collection.size())/size);
     int end = (process_id + 1) * (static_cast<double>(collection.size())/size) - 1;
-
-    if(process_id == 1 )
-    {   
-        for(int i = start; i <= end; i ++)
-            cout << collection[i] << endl;
-    
-
-    // Read from File system to count words
-    std::ifstream fin;
-    fin.open("Books/" + collection[0]);
-    
-    std::string word;
-    while(fin >> word)
+ 
+    for(int i = start; i <= end; i ++)
     {
-        ++wordMap[word];
-    }
+        // Read from File system to count words
+        std::ifstream fin;
+        fin.open("Books/" + collection[i]);
+        
+        std::string word;
+        while(fin >> word)
+        {
+            ++wordMap[word];
+        }
 
-    fin.close();
+        fin.close();
     }
-
-    cout << "Word Count of the: " << wordMap["the"] << endl;
+    int wordCountTotalLocal = wordMap["the"];
+    cout << "Processor " << process_id << ": Word Count of the: " << wordMap["the"] << endl;
+    MPI_Reduce(&wordCountTotalLocal, &wordCountGlobal, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    if(process_id == 0)
+    {
+        cout << "Global Word Map Count Total: " << wordCountGlobal << endl;
+    }
     MPI_Finalize();
     return 0;
 }
