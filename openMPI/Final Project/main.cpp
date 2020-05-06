@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sys/types.h>
+#include <dirent.h>
 
 using std::cout;
 using std::endl;
@@ -26,15 +28,23 @@ int main(int argc, char *argv[]) {
     if (process_id == 0)
     {   
         // Get book names from directory /Books and add them to the collection vector
-        collection.push_back("Book_1");
-        collection.push_back("Book_2");
-        collection.push_back("Book_3");
-        collection.push_back("Book_4");
+        DIR *dpdf;
+        struct dirent *epdf;
+        dpdf = opendir("Books");
+        if (dpdf != NULL) 
+        {
+            while ((epdf = readdir(dpdf))) 
+            {
+                collection.push_back(std::string(epdf->d_name).c_str());
+            }
+        }
         num_of_books = collection.size();
+
         for (int i =0; i < size; i++)
         {
             MPI_Send(&num_of_books, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
         }
+
     }
     
     // Getting vector size from processor_id 0
@@ -53,7 +63,7 @@ int main(int argc, char *argv[]) {
     // Broadcasting book names to all processors
     // collection.size works because it was resized before this point on all processors
     for(int i =0; i < collection.size(); i++)
-        MPI_Bcast(&collection[i], 20, MPI_CHAR, 0, MPI_COMM_WORLD);
+        MPI_Bcast(&collection[i], 1024, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     // Wait for All processors to finish reading in data
     MPI_Barrier(MPI_COMM_WORLD);
@@ -66,6 +76,14 @@ int main(int argc, char *argv[]) {
     int end = (process_id + 1) * (static_cast<double>(jobs)/size) - 1;
 
     // Main Driver to work through all assigned books for each processor
+    if (process_id == 0)
+    {
+        for(int i = 0; i < num_of_books; i++)
+        {
+            cout << collection[i] << endl;
+        }   
+        cout << num_of_books << endl;
+    }
     for(int i = start; i <= end; i++)
     {
 
@@ -78,7 +96,7 @@ int main(int argc, char *argv[]) {
 
     }
 
-    
+
 
     
     MPI_Finalize();
