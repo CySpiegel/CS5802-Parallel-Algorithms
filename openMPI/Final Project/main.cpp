@@ -24,7 +24,8 @@ int main(int argc, char *argv[]) {
     std::vector<std::string> collection;
 
     if (process_id == 0)
-    {
+    {   
+        // Get book names from directory /Books and add them to the collection vector
         collection.push_back("Book_1");
         collection.push_back("Book_2");
         collection.push_back("Book_3");
@@ -59,43 +60,25 @@ int main(int argc, char *argv[]) {
 
     /* ------------------------------------------------------------------------------------ */
 
-    // Set each processors to be available for work
-    int readyForWork = 1;
-    // Total number of jobs needing to be processed
-    int jobsLeft = collection.size();
-    // Index of current job needing to be processed
-    int jobIndex = 0;
+    // Deviding work evenly as possable across all processors
+    int jobs = collection.size();
+    int start = process_id * (static_cast<double>(jobs)/size);
+    int end = (process_id + 1) * (static_cast<double>(jobs)/size) - 1;
+
+    // Main Driver to work through all assigned books for each processor
+    for(int i = start; i <= end; i++)
+    {
 
 
 
-    if (process_id == 0)
-    {   
-        int proc = 0;
-        while(jobIndex < jobsLeft)
-        {
-            MPI_Recv(&readyForWork, 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-            proc = status.MPI_SOURCE;
-            cout << "From Processor: " << proc << endl;
-            MPI_Send(&jobIndex, 1, MPI_INT, proc, 0, MPI_COMM_WORLD);
-            jobIndex++;
-        }
-        cout << "Process 0 Terminated" << endl;
-    }
-    else
-    {   
-        status.MPI_SOURCE = process_id;
-        MPI_Ssend(&readyForWork, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-        while(jobIndex >= 0)
-        {
-            MPI_Recv(&jobIndex, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            cout << "Proc: " << process_id << " job: " << jobIndex << endl;
-        }
+
+
+
+
 
     }
 
     
-
-
 
     
     MPI_Finalize();

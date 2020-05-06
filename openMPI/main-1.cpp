@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
 
-
+    
     int nthreads, tid;
     int i, n=16, chunk=4;
     double a[N],b[N];
