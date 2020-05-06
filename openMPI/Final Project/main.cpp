@@ -61,29 +61,38 @@ int main(int argc, char *argv[]) {
 
     // Set each processors to be available for work
     int readyForWork = 1;
-
     // Total number of jobs needing to be processed
     int jobsLeft = collection.size();
-
     // Index of current job needing to be processed
     int jobIndex = 0;
-    int fromProc = 0;
 
 
-    for(int i = 0; i < size; i++)
-    {
-        status.MPI_SOURCE = process_id;
-        if (process_id == 0)
+
+    if (process_id == 0)
+    {   
+        int proc = 0;
+        while(jobIndex < jobsLeft)
         {
-            MPI_Recv(&readyForWork, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &status);
-            cout << "From Processor: " << status.MPI_SOURCE << endl;
+            MPI_Recv(&readyForWork, 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+            proc = status.MPI_SOURCE;
+            cout << "From Processor: " << proc << endl;
+            MPI_Send(&jobIndex, 1, MPI_INT, proc, 0, MPI_COMM_WORLD);
+            jobIndex++;
         }
-        else
-        {
-            MPI_Send(&readyForWork, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-        }
-        
+        cout << "Process 0 Terminated" << endl;
     }
+    else
+    {   
+        status.MPI_SOURCE = process_id;
+        MPI_Ssend(&readyForWork, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        while(jobIndex >= 0)
+        {
+            MPI_Recv(&jobIndex, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            cout << "Proc: " << process_id << " job: " << jobIndex << endl;
+        }
+
+    }
+
     
 
 
