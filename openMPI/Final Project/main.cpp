@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <map>
+#include "timer.h"
 
 using std::cout;
 using std::endl;
@@ -81,7 +82,11 @@ int main(int argc, char *argv[]) {
     // Deviding work evenly as possable across all processors
     int start = process_id * (static_cast<double>(collection.size())/size);
     int end = (process_id + 1) * (static_cast<double>(collection.size())/size) - 1;
- 
+    if(process_id == 0)
+    {
+        StartTimer();
+    }
+
     for(int i = start; i <= end; i ++)
     {
         // Read from File system to count words
@@ -99,9 +104,12 @@ int main(int argc, char *argv[]) {
     int wordCountTotalLocal = wordMap["the"];
     cout << "Processor " << process_id << ": Word Count of the: " << wordMap["the"] << endl;
     MPI_Reduce(&wordCountTotalLocal, &wordCountGlobal, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    
     if(process_id == 0)
     {
+        double tElapsed = GetTimer() / 1000.0;
         cout << "Global Word Map Count Total: " << wordCountGlobal << endl;
+        cout << "Total Time Taken: " << tElapsed << endl;
     }
     MPI_Finalize();
     return 0;
