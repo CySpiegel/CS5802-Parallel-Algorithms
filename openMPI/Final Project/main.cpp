@@ -7,8 +7,10 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <sys/types.h>
 #include <dirent.h>
+#include <map>
 
 using std::cout;
 using std::endl;
@@ -24,6 +26,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     std::vector<std::string> filenames;
     std::vector<std::string> collection;
+    std::map<std::string, int> wordMap;
 
     if (process_id == 0)
     {   
@@ -80,12 +83,24 @@ int main(int argc, char *argv[]) {
 
     if(process_id == 1 )
     {   
-        for(int i = 0; i < collection.size(); i ++)
+        for(int i = start; i <= end; i ++)
             cout << collection[i] << endl;
+    
+
+    // Read from File system to count words
+    std::ifstream fin;
+    fin.open("Books/" + collection[0]);
+    
+    std::string word;
+    while(fin >> word)
+    {
+        ++wordMap[word];
     }
 
+    fin.close();
+    }
 
-    
+    cout << "Word Count of the: " << wordMap["the"] << endl;
     MPI_Finalize();
     return 0;
 }
