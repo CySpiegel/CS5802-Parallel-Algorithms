@@ -75,6 +75,8 @@ int main(int argc, char *argv[]) {
     /* ------------------------------------------------------------------------------------ */
 
     // Deviding work evenly as possable across all processors
+    int start = process_id * (static_cast<double>(collection.size())/size);
+    int end = (process_id + 1) * (static_cast<double>(collection.size())/size) - 1;
 
     if(process_id == 1 )
     {   
