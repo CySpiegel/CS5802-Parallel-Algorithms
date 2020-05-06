@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     MPI_Status status;
     MPI_Comm_rank(MPI_COMM_WORLD, &process_id);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-
+    std::vector<std::string> filenames;
     std::vector<std::string> collection;
 
     if (process_id == 0)
@@ -35,8 +35,12 @@ int main(int argc, char *argv[]) {
         {
             while ((epdf = readdir(dpdf))) 
             {
-                collection.push_back(std::string(epdf->d_name).c_str());
+                filenames.push_back(std::string(epdf->d_name).c_str());
             }
+        }
+        for (int i = 2; i < filenames.size(); i++)
+        {   
+            collection.push_back(filenames[i]);
         }
         num_of_books = collection.size();
 
@@ -63,7 +67,7 @@ int main(int argc, char *argv[]) {
     // Broadcasting book names to all processors
     // collection.size works because it was resized before this point on all processors
     for(int i =0; i < collection.size(); i++)
-        MPI_Bcast(&collection[i], 1024, MPI_CHAR, 0, MPI_COMM_WORLD);
+        MPI_Bcast(&collection[i], 20, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     // Wait for All processors to finish reading in data
     MPI_Barrier(MPI_COMM_WORLD);
@@ -71,31 +75,12 @@ int main(int argc, char *argv[]) {
     /* ------------------------------------------------------------------------------------ */
 
     // Deviding work evenly as possable across all processors
-    int jobs = collection.size();
-    int start = process_id * (static_cast<double>(jobs)/size);
-    int end = (process_id + 1) * (static_cast<double>(jobs)/size) - 1;
 
-    // Main Driver to work through all assigned books for each processor
-    if (process_id == 0)
-    {
-        for(int i = 0; i < num_of_books; i++)
-        {
+    if(process_id == 1 )
+    {   
+        for(int i = 0; i < collection.size(); i ++)
             cout << collection[i] << endl;
-        }   
-        cout << num_of_books << endl;
     }
-    for(int i = start; i <= end; i++)
-    {
-
-
-
-
-
-
-
-
-    }
-
 
 
     
